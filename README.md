@@ -95,32 +95,11 @@ It is worth noting that if the resources within the network were heavily utilize
 
 ## KQL Queries
 
-| Metric                   | Count
-| ------------------------ | -----
-| Start time           | "range x from 1 to 1 step 1
-\| project StartTime = ago(24h), StopTime = now()"
-| Syslog                   | 6
-| SecurityAlert            | 0
-| SecurityIncident         | 0
-| AzureNetworkAnalytics_CL | 0
-
-
-
-Stop Time	
-Security Events (Windows VMs)	"SecurityEvent
-| where TimeGenerated >= ago(24h)
-| count"
-Syslog (Linux VMs)	"Syslog
-| where TimeGenerated >= ago(24h)
-| count"
-SecurityAlert (Microsoft Defender for Cloud)	"SecurityAlert
-| where DisplayName !startswith ""CUSTOM"" and DisplayName !startswith ""TEST""
-| where TimeGenerated >= ago(24h)
-| count"
-Security Incident (Sentinel Incidents)	"SecurityIncident
-| where TimeGenerated >= ago(24h)
-| count"
-NSG Inbound Malicious Flows Allowed	"AzureNetworkAnalytics_CL 
-| where FlowType_s == ""MaliciousFlow"" and AllowedInFlows_d > 0
-| where TimeGenerated >= ago(24h)
-| count"
+| Metric                                       | Query                                                                                                                                            |
+|----------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------|
+| Start/Stop Time                              | range x from 1 to 1 step 1<br>\| project StartTime = ago(24h), StopTime = now()                                                                  |
+| Security Events (Windows VMs)                | SecurityEvent<br>\| where TimeGenerated>= ago(24h)<br>\| count                                                                                   |
+| Syslog (Linux VMs)                           | Syslog<br>\| where TimeGenerated >= ago(24h)<br>\| count                                                                                         |
+| SecurityAlert (Microsoft Defender for Cloud) | Security Alert<br>\| where DisplayName !startswith "CUSTOM" and DisplayName !startswith "TEST"<br>\| where TimeGenerated >= ago(24h)<br>\| count |
+| Security Incident (Sentinel Incidents)       | SecurityIncident<br>\| where TimeGenerated >= ago(24h)<br>\| count                                                                               |
+| NSG Inbound Malicious Flows Allowed          | AzureNetworkAnalytics_CL<br>\| where FlowType_s == "MaliciousFlow" and AllowedInFlows_d > 0<br>\| where TimeGenerated >= ago(24h)<br>\| count    |
