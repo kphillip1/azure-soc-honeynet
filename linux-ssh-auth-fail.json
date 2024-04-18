@@ -1,0 +1,33 @@
+{
+  "type": 3,
+  "content": {
+    "version": "KqlItem/1.0",
+    "query": "let GeoIPDB_FULL = _GetWatchlist(\"geoip\");\nlet IpAddress_REGEX_PATTERN = @\"\\b\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\b\";\nSyslog\n| where Facility == \"auth\"\n| where SyslogMessage startswith \"Failed password for\"\n| order by TimeGenerated desc\n| project TimeGenerated, SourceIP = extract(IpAddress_REGEX_PATTERN, 0, SyslogMessage), DestinationHostName = HostName, DestinationIP = HostIP, Facility, SyslogMessage, ProcessName, SeverityLevel, Type\n| evaluate ipv4_lookup(GeoIPDB_FULL, SourceIP, network)\n| project TimeGenerated, SourceIP, DestinationHostName, DestinationIP, Facility, SyslogMessage, ProcessName, SeverityLevel, Type, latitude, longitude, city = cityname, country = countryname, friendly_location = strcat(cityname, \" (\", countryname, \")\");",
+    "size": 3,
+    "timeContext": {
+      "durationMs": 2592000000
+    },
+    "queryType": 0,
+    "resourceType": "microsoft.operationalinsights/workspaces",
+    "visualization": "map",
+    "mapSettings": {
+      "locInfo": "LatLong",
+      "locInfoColumn": "countryname",
+      "latitude": "latitude",
+      "longitude": "longitude",
+      "sizeSettings": "latitude",
+      "sizeAggregation": "Count",
+      "opacity": 0.8,
+      "labelSettings": "friendly_location",
+      "legendMetric": "friendly_location",
+      "legendAggregation": "Count",
+      "itemColorSettings": {
+        "nodeColorField": "latitude",
+        "colorAggregation": "Count",
+        "type": "heatmap",
+        "heatmapPalette": "greenRed"
+      }
+    }
+  },
+  "name": "query - 0"
+}
